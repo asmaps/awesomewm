@@ -3,6 +3,8 @@
 Config files for the awesome window manager
 
 
-## rc.lua
+## Usage
 
-put rc.lua in ~/.config/awesome/ to use the config
+Install visious. On debian based systems install `awesome-extra` package.
+
+Then put rc.lua in ~/.config/awesome/ to use the config
