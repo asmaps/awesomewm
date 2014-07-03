@@ -7,6 +7,9 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
+-- widgets
+require("vicious")
+
 -- Load Debian menu entries
 require("debian.menu")
 
@@ -101,6 +104,51 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
 
+-- create a battery widget
+
+baticon = widget({ type = "imagebox" })
+batwidget0 = widget({ type = "textbox" })
+batwidget1 = widget({ type = "textbox" })
+vicious.register(batwidget0, vicious.widgets.bat, function (widget, args)
+	-- different widget appearance
+	--
+	b_dis = "▼ "
+	b_cha = "▲ "
+
+	if  args[2] < 30 and args[2] >= 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis ..  args[2] .. "</b>% <b>" ..args[3] .. "</b>"  .. ""
+	elseif args[2] < 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis.. args[2] .. "</b>% <b>" .. args[3] .. "</b>" .. ""
+	elseif args[1] == "-" then
+		return "<b>" .. b_dis .. args[2].. "</b>% (<b>" .. args[3] .. "</b>)"
+	elseif args[1] == "+" then
+		return "" .. b_cha .. "<b>" .. args[2] .. "</b>%"
+	else
+		return "<b>" .. args[1] .. "</b>"
+	end
+end, 10, "BAT0")
+vicious.register(batwidget1, vicious.widgets.bat, function (widget, args)
+	-- different widget appearance
+	--
+	b_dis = "▼ "
+	b_cha = "▲ "
+
+	if  args[2] < 30 and args[2] >= 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis ..  args[2] .. "</b>% <b>" ..args[3] .. "</b>"  .. ""
+	elseif args[2] < 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis.. args[2] .. "</b>% <b>" .. args[3] .. "</b>" .. ""
+	elseif args[1] == "-" then
+		return "<b>" .. b_dis .. args[2].. "</b>% (<b>" .. args[3] .. "</b>)"
+	elseif args[1] == "+" then
+		return "" .. b_cha .. "<b>" .. args[2] .. "</b>%"
+	else
+		return "<b>" .. args[1] .. "</b>"
+	end
+end , 10, "BAT1")
+
+separator = widget({ type = "imagebox" })
+separator.image = image(beautiful.widget_sep)
+
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
@@ -181,6 +229,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
+	batwidget1, batwidget0, baticon or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
