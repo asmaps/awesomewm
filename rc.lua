@@ -7,6 +7,9 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
+-- widgets
+require("vicious")
+
 -- Load Debian menu entries
 require("debian.menu")
 
@@ -101,6 +104,51 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 -- Create a textclock widget
 mytextclock = awful.widget.textclock({ align = "right" })
 
+-- create a battery widget
+
+baticon = widget({ type = "imagebox" })
+batwidget0 = widget({ type = "textbox" })
+batwidget1 = widget({ type = "textbox" })
+vicious.register(batwidget0, vicious.widgets.bat, function (widget, args)
+	-- different widget appearance
+	--
+	b_dis = "▼ "
+	b_cha = "▲ "
+
+	if  args[2] < 30 and args[2] >= 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis ..  args[2] .. "</b>% <b>" ..args[3] .. "</b>"  .. ""
+	elseif args[2] < 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis.. args[2] .. "</b>% <b>" .. args[3] .. "</b>" .. ""
+	elseif args[1] == "-" then
+		return "<b>" .. b_dis .. args[2].. "</b>% (<b>" .. args[3] .. "</b>)"
+	elseif args[1] == "+" then
+		return "" .. b_cha .. "<b>" .. args[2] .. "</b>%"
+	else
+		return "<b>" .. args[1] .. "</b>"
+	end
+end, 10, "BAT0")
+vicious.register(batwidget1, vicious.widgets.bat, function (widget, args)
+	-- different widget appearance
+	--
+	b_dis = "▼ "
+	b_cha = "▲ "
+
+	if  args[2] < 30 and args[2] >= 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis ..  args[2] .. "</b>% <b>" ..args[3] .. "</b>"  .. ""
+	elseif args[2] < 15 and args[1] == "-" then
+		return "" .. "<b>" .. b_dis.. args[2] .. "</b>% <b>" .. args[3] .. "</b>" .. ""
+	elseif args[1] == "-" then
+		return "<b>" .. b_dis .. args[2].. "</b>% (<b>" .. args[3] .. "</b>)"
+	elseif args[1] == "+" then
+		return "" .. b_cha .. "<b>" .. args[2] .. "</b>%"
+	else
+		return "<b>" .. args[1] .. "</b>"
+	end
+end , 10, "BAT1")
+
+separator = widget({ type = "imagebox" })
+separator.image = image(beautiful.widget_sep)
+
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
@@ -181,6 +229,7 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
+	batwidget1, batwidget0, baticon or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
@@ -216,6 +265,8 @@ globalkeys = awful.util.table.join(
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end),
+    awful.key({ modkey,  	  }, "Up", function () awful.screen.focus_relative( 1) end),
+    awful.key({ modkey,  	  }, "Down", function () awful.screen.focus_relative(-1) end),
     awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end),
     awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
@@ -375,3 +426,27 @@ end)
 client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
+
+
+-- autostart:
+function run_once(prg,arg_string,pname,screen)
+    if not prg then
+        do return nil end
+    end
+
+    if not pname then
+       pname = prg
+    end
+
+    if not arg_string then 
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
+    else
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. " " .. arg_string .. ")",screen)
+    end
+end
+
+run_once("xscreensaver","-no-splash")
+-- run_once("nm-applet","")
+run_once("xfsettingsd","")
+run_once("xfce4-power-manager","")
+run_once("setxkbmap -model pc105 -layout de -variant nodeadkeys")
