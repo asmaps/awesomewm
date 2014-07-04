@@ -1,3 +1,4 @@
+require("io")
 -- Standard awesome library
 require("awful")
 require("awful.autofocus")
@@ -12,6 +13,27 @@ require("vicious")
 
 -- Load Debian menu entries
 require("debian.menu")
+
+-- autostart helper:
+function run_once(prg,arg_string,pname,screen)
+    if not prg then
+        do return nil end
+    end
+
+    if not pname then
+       pname = prg
+    end
+
+    if not arg_string then 
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
+    else
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. " " .. arg_string .. ")",screen)
+    end
+end
+
+hostname = io.popen("uname -n"):read()
+username = io.popen("whoami"):read()
+require(username .. "-" .. hostname)
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -282,6 +304,9 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
+    awful.key({ modkey,           }, "F1", function() run_once('~/.screenlayout/1screen.sh') end),
+    awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/2displaysabove.sh') end),
+    awful.key({ "Control", "Mod1" }, "l", function() run_once(screensaver_cmd) end),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
@@ -428,25 +453,8 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- }}}
 
 
--- autostart:
-function run_once(prg,arg_string,pname,screen)
-    if not prg then
-        do return nil end
-    end
-
-    if not pname then
-       pname = prg
-    end
-
-    if not arg_string then 
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
-    else
-        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. " " .. arg_string .. ")",screen)
-    end
-end
-
-run_once("xscreensaver","-no-splash")
+-- run_once("xscreensaver","-no-splash")
 -- run_once("nm-applet","")
-run_once("xfsettingsd","")
-run_once("xfce4-power-manager","")
+-- run_once("xfsettingsd","")
+-- run_once("xfce4-power-manager","")
 run_once("setxkbmap -model pc105 -layout de -variant nodeadkeys")
