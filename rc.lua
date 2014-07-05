@@ -168,8 +168,8 @@ vicious.register(batwidget1, vicious.widgets.bat, function (widget, args)
 	end
 end , 10, "BAT1")
 
-separator = widget({ type = "imagebox" })
-separator.image = image(beautiful.widget_sep)
+separator = widget({ type = "textbox" })
+separator.text = " | "
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -251,7 +251,11 @@ for s = 1, screen.count() do
         mylayoutbox[s],
         mytextclock,
         s == 1 and mysystray or nil,
-	batwidget1, batwidget0, baticon or nil,
+	separator,
+	batwidget1,
+	separator,
+	batwidget0,
+	separator,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
