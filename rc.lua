@@ -260,6 +260,7 @@ for s = 1, screen.count() do
 	mytextclock,
 	timeicon,
         s == 1 and mysystray or nil,
+	spacer,
 	separator, spacer,
 	batwidget1, spacer,
 	baticon, spacer,
