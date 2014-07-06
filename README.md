@@ -7,7 +7,7 @@ Config files for the awesome window manager
 
 Install vicious. On debian based systems install `awesome-extra` package.
 
-Then put rc.lua in ~/.config/awesome/ to use the config
+Symlink rc.lua and icons folder to your ~/.config/awesome/ by using ` init.sh`.
 
 
 ## required files
