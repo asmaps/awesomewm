@@ -129,6 +129,8 @@ mytextclock = awful.widget.textclock({ align = "right" })
 -- create a battery widget
 
 baticon = widget({ type = "imagebox" })
+baticon.image = image(awful.util.getdir("config") .. "/icons/bat.png")
+
 batwidget0 = widget({ type = "textbox" })
 batwidget1 = widget({ type = "textbox" })
 vicious.register(batwidget0, vicious.widgets.bat, function (widget, args)
@@ -168,8 +170,14 @@ vicious.register(batwidget1, vicious.widgets.bat, function (widget, args)
 	end
 end , 10, "BAT1")
 
-separator = widget({ type = "textbox" })
-separator.text = " | "
+separator = widget({ type = "imagebox" })
+separator.image = image(awful.util.getdir("config") .. "/icons/separator.png")
+
+timeicon = widget({ type = "imagebox" })
+timeicon.image = image(awful.util.getdir("config") .. "/icons/time.png")
+
+spacer = widget({ type = "textbox" })
+spacer.width = 3
 
 -- Create a systray
 mysystray = widget({ type = "systray" })
@@ -249,13 +257,17 @@ for s = 1, screen.count() do
             layout = awful.widget.layout.horizontal.leftright
         },
         mylayoutbox[s],
-        mytextclock,
+	mytextclock,
+	timeicon,
         s == 1 and mysystray or nil,
-	separator,
-	batwidget1,
-	separator,
-	batwidget0,
-	separator,
+	spacer,
+	separator, spacer,
+	batwidget1, spacer,
+	baticon, spacer,
+	separator, spacer,
+	batwidget0, spacer,
+	baticon, spacer,
+	separator, spacer,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
     }
