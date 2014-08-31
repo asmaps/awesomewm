@@ -2,6 +2,11 @@
 
 Config files for the awesome window manager
 
+## Requirements
+
+Probably only works on debian (and maybe ubuntu).
+Also requires awesome 3.4
+
 
 ## Usage
 
@@ -14,7 +19,7 @@ Symlink rc.lua and icons folder to your ~/.config/awesome/ by using ` init.sh`.
 
 create the file ~/.config/awesome/username-hostname.lua for your specific config.
 
-This file should set:
+This file must set:
 
 ```
 # command to start your screensaver/lock pc
