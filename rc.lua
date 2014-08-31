@@ -320,9 +320,12 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
-    awful.key({ modkey,           }, "F1", function() run_once('~/.screenlayout/1screen.sh') end),
-    awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/2displaysabove.sh') end),
     awful.key({ "Control", "Mod1" }, "l", function() run_once(screensaver_cmd) end),
+
+    -- Display configs
+    awful.key({ modkey,           }, "F1", function() run_once('~/.screenlayout/1screen.sh') end),
+    awful.key({ modkey,           }, "F2", function() run_once('~/.screenlayout/2screens.sh') end),
+    awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/2displaysabove.sh') end),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
