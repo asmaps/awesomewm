@@ -325,7 +325,8 @@ globalkeys = awful.util.table.join(
     -- Display configs
     awful.key({ modkey,           }, "F1", function() run_once('~/.screenlayout/1screen.sh') end),
     awful.key({ modkey,           }, "F2", function() run_once('~/.screenlayout/2screens.sh') end),
-    awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/2displaysabove.sh') end),
+    awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/3screens.sh') end),
+    awful.key({ modkey,           }, "F4", function() run_once('~/.screenlayout/3screens_home.sh') end),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
