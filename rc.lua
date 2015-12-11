@@ -320,13 +320,25 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Return", function () awful.util.spawn(terminal) end),
     awful.key({ modkey, "Control" }, "r", awesome.restart),
     awful.key({ modkey, "Shift"   }, "q", awesome.quit),
-    awful.key({ "Control", "Mod1" }, "l", function() run_once(screensaver_cmd) end),
+    awful.key({ "Control", "Mod1" }, "l", function() run_once('~/.config/awesome/lock.sh') end),
 
     -- Display configs
     awful.key({ modkey,           }, "F1", function() run_once('~/.screenlayout/1screen.sh') end),
     awful.key({ modkey,           }, "F2", function() run_once('~/.screenlayout/2screens.sh') end),
     awful.key({ modkey,           }, "F3", function() run_once('~/.screenlayout/3screens.sh') end),
     awful.key({ modkey,           }, "F4", function() run_once('~/.screenlayout/3screens_home.sh') end),
+
+    -- brightness settings
+    awful.key({ "Control", "Mod1" }, "1", function() run_once("xbacklight -set 10") end),
+    awful.key({ "Control", "Mod1" }, "2", function() run_once("xbacklight -set 20") end),
+    awful.key({ "Control", "Mod1" }, "3", function() run_once("xbacklight -set 30") end),
+    awful.key({ "Control", "Mod1" }, "4", function() run_once("xbacklight -set 40") end),
+    awful.key({ "Control", "Mod1" }, "5", function() run_once("xbacklight -set 50") end),
+    awful.key({ "Control", "Mod1" }, "6", function() run_once("xbacklight -set 60") end),
+    awful.key({ "Control", "Mod1" }, "7", function() run_once("xbacklight -set 70") end),
+    awful.key({ "Control", "Mod1" }, "8", function() run_once("xbacklight -set 80") end),
+    awful.key({ "Control", "Mod1" }, "9", function() run_once("xbacklight -set 90") end),
+    awful.key({ "Control", "Mod1" }, "0", function() run_once("xbacklight -set 100") end),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)    end),
     awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)    end),
@@ -478,3 +490,4 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- run_once("xfsettingsd","")
 -- run_once("xfce4-power-manager","")
 run_once("setxkbmap -model pc105 -layout de -variant nodeadkeys")
+run_once("awsetbg /home/asmaps/Pictures/nywallpaper.jpg")
