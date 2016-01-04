@@ -1,18 +1,20 @@
-require("io")
+local io = require("io")
+local gears = require("gears")
+local wibox = require("wibox")
 -- Standard awesome library
-require("awful")
-require("awful.autofocus")
-require("awful.rules")
+local awful = require("awful")
+awful.autofocus = require("awful.autofocus")
+awful.rules = require("awful.rules")
 -- Theme handling library
-require("beautiful")
+local beautiful = require("beautiful")
 -- Notification library
-require("naughty")
+local naughty = require("naughty")
 
 -- widgets
-require("vicious")
+local vicious = require("vicious")
 
 -- Load Debian menu entries
-require("debian.menu")
+local debianmenu = require("debian.menu")
 
 -- autostart helper:
 function run_once(prg,arg_string,pname,screen)
@@ -47,7 +49,7 @@ end
 -- Handle runtime errors after startup
 do
     local in_error = false
-    awesome.add_signal("debug::error", function (err)
+    awesome.connect_signal("debug::error", function (err)
         -- Make sure we don't go into an endless error loop
         if in_error then return end
         in_error = true
@@ -62,7 +64,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, and wallpapers
-beautiful.init("/usr/share/awesome/themes/default/theme.lua")
+beautiful.init("~/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -113,26 +115,29 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Debian", debian.menu.Debian_menu.Debian },
+                                    { "Debian", debianmenu.Debian_menu.Debian },
                                     { "open terminal", terminal }
                                   }
                         })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
+mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
+
 -- }}}
 
 -- {{{ Wibox
 -- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+clockicon = wibox.widget.imagebox()
+clockicon:set_image(beautiful.widget_clock)
+mytextclock = awful.widget.textclock()
 
 -- create a battery widget
 
-baticon = widget({ type = "imagebox" })
-baticon.image = image(awful.util.getdir("config") .. "/icons/bat.png")
+baticon = wibox.widget.imagebox()
+baticon:set_image(awful.util.getdir("config") .. "/icons/bat.png")
 
-batwidget0 = widget({ type = "textbox" })
-batwidget1 = widget({ type = "textbox" })
+batwidget0 = wibox.widget.textbox()
+batwidget1 = wibox.widget.textbox()
 vicious.register(batwidget0, vicious.widgets.bat, function (widget, args)
 	-- different widget appearance
 	--
@@ -170,17 +175,17 @@ vicious.register(batwidget1, vicious.widgets.bat, function (widget, args)
 	end
 end , 10, "BAT1")
 
-separator = widget({ type = "imagebox" })
-separator.image = image(awful.util.getdir("config") .. "/icons/separator.png")
+separator = wibox.widget.imagebox()
+separator:set_image(awful.util.getdir("config") .. "/icons/separator.png")
 
-timeicon = widget({ type = "imagebox" })
-timeicon.image = image(awful.util.getdir("config") .. "/icons/time.png")
+timeicon = wibox.widget.imagebox()
+timeicon:set_image(awful.util.getdir("config") .. "/icons/time.png")
 
-spacer = widget({ type = "textbox" })
+spacer = wibox.widget.textbox()
 spacer.width = 3
 
 -- Create a systray
-mysystray = widget({ type = "systray" })
+mysystray = wibox.widget.systray()
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -229,7 +234,7 @@ mytasklist.buttons = awful.util.table.join(
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+    mypromptbox[s] = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     mylayoutbox[s] = awful.widget.layoutbox(s)
@@ -239,38 +244,50 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
+    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(function(c)
-                                              return awful.widget.tasklist.label.currenttags(c, s)
-                                          end, mytasklist.buttons)
+    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
     mywibox[s] = awful.wibox({ position = "top", screen = s })
-    -- Add widgets to the wibox - order matters
-    mywibox[s].widgets = {
-        {
-            mylauncher,
-            mytaglist[s],
-            mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright
-        },
-        mylayoutbox[s],
-	mytextclock,
-	timeicon,
-        s == 1 and mysystray or nil,
-	spacer,
-	separator, spacer,
-	batwidget1, spacer,
-	baticon, spacer,
-	separator, spacer,
-	batwidget0, spacer,
-	baticon, spacer,
-	separator, spacer,
-        mytasklist[s],
-        layout = awful.widget.layout.horizontal.rightleft
-    }
+
+    -- Widgets that are aligned to the left
+    local left_layout = wibox.layout.fixed.horizontal()
+    left_layout:add(mylauncher)
+    left_layout:add(mytaglist[s])
+    left_layout:add(mypromptbox[s])
+
+    -- Widgets that are aligned to the right
+    local right_layout = wibox.layout.fixed.horizontal()
+    right_layout:add(spacer)
+    right_layout:add(separator)
+    right_layout:add(spacer)
+    right_layout:add(batwidget1)
+    right_layout:add(spacer)
+    right_layout:add(baticon)
+    right_layout:add(spacer)
+    right_layout:add(separator)
+    right_layout:add(spacer)
+    right_layout:add(batwidget0)
+    right_layout:add(spacer)
+    right_layout:add(baticon)
+    right_layout:add(spacer)
+    right_layout:add(separator)
+    right_layout:add(spacer)
+
+    if s == 1 then right_layout:add(wibox.widget.systray()) end
+    right_layout:add(timeicon)
+    right_layout:add(mytextclock)
+    right_layout:add(mylayoutbox[s])
+
+    -- Now bring it all together (with the tasklist in the middle)
+    local layout = wibox.layout.align.horizontal()
+    layout:set_left(left_layout)
+    layout:set_middle(mytasklist[s])
+    layout:set_right(right_layout)
+
+    mywibox[s]:set_widget(layout)
 end
 -- }}}
 
@@ -490,4 +507,3 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- run_once("xfsettingsd","")
 -- run_once("xfce4-power-manager","")
 run_once("setxkbmap -model pc105 -layout de -variant nodeadkeys")
-run_once("awsetbg /home/asmaps/Pictures/nywallpaper.jpg")
