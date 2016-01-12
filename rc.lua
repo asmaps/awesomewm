@@ -553,3 +553,4 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 -- run_once("xfce4-power-manager","")
 run_once("setxkbmap -model pc105 -layout de -variant nodeadkeys")
 run_once("feh --bg-scale .config/awesome/themes/default/background.png")
+run_once("xmodmap -e \"keycode 118 = End\"")
