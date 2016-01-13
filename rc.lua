@@ -304,6 +304,8 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev       ),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext       ),
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore),
+    awful.key({ modkey,           }, "Insert", run_once("xmodmap -e \"keycode 118 = End\"")),
+
 
     awful.key({ modkey,           }, "j",
         function ()
